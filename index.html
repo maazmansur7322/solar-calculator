@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Solar Calc">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1F3864">
+<title>Solar Cost Calculator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #1F3864;
+    padding: 16px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  .header h1 {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .header p {
+    color: #C9A84C;
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    background: #fff;
+    margin: 12px 12px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+
+  .section-head {
+    background: #1F3864;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 9px 14px;
+  }
+
+  .section-body { padding: 14px; }
+
+  /* ── INPUT ROWS ── */
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .row:last-child { border-bottom: none; }
+
+  .row label {
+    font-size: 13px;
+    color: #333;
+    font-weight: 600;
+    flex: 1;
+    padding-right: 10px;
+  }
+
+  .row input {
+    width: 130px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 10px;
+    font-size: 16px;       /* stops iOS zoom */
+    color: #1F3864;
+    font-weight: 700;
+    text-align: right;
+    outline: none;
+    -webkit-appearance: none;
+    background: #fff;
+  }
+  .row input:focus { border-color: #1F3864; background: #f0f5ff; }
+  .row input.hi    { background: #fffbe6; border-color: #C9A84C; }
+
+  /* ── BREAKDOWN TABLE ── */
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: #1F3864;
+    color: #fff;
+    padding: 10px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+  }
+  thead th:nth-child(2),
+  thead th:nth-child(3) { text-align: right; }
+
+  .cat-row td {
+    background: #eef2f7;
+    color: #888;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 5px 10px;
+  }
+
+  tbody tr { border-bottom: 1px solid #f0f0f0; }
+  tbody td {
+    padding: 10px 10px;
+    color: #333;
+    font-size: 13px;
+  }
+  tbody td:nth-child(2),
+  tbody td:nth-child(3) {
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #1F3864;
+  }
+  tbody td:nth-child(2) { color: #555; }
+
+  .total-row td {
+    background: #1F3864;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 10px;
+  }
+  .total-row td:last-child {
+    text-align: right;
+    color: #FFD700;
+    font-size: 15px;
+  }
+
+  /* ── METRICS ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .metric {
+    background: #1F3864;
+    border-radius: 10px;
+    padding: 14px 8px;
+    text-align: center;
+  }
+  .metric .lbl {
+    font-size: 9px;
+    color: #aac4e8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+  }
+  .metric .val {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFD700;
+    margin: 5px 0 3px;
+    word-break: break-all;
+    line-height: 1.2;
+  }
+  .metric .sub {
+    font-size: 9px;
+    color: #C9A84C;
+  }
+
+  .note {
+    text-align: center;
+    font-size: 10px;
+    color: #aaa;
+    padding: 10px 14px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>☀ SOLAR PANEL LANDED COST</h1>
+  <p>China → Pakistan &nbsp;|&nbsp; Ex Karachi Port</p>
+</div>
+
+<!-- EXCHANGE RATES -->
+<div class="section">
+  <div class="section-head">Exchange Rates</div>
+  <div class="section-body">
+    <div class="row">
+      <label>USD / PKR Rate</label>
+      <input type="number" inputmode="decimal" id="dollar" value="280" step="0.5">
+    </div>
+    <div class="row">
+      <label>RMB / USD Rate</label>
+      <input type="number" inputmode="decimal" id="rmb" value="6.88" step="0.01">
+    </div>
+  </div>
+</div>
+
+<!-- PANEL DETAILS -->
+<div class="section">
+  <div class="section-head">Panel Details</div>
+  <div class="section-body">
+    <div class="row">
+      <label>Per Watt Cost (USD) ★</label>
+      <input class="hi" type="number" inputmode="decimal" id="perWatt" value="0.118" step="0.001">
+    </div>
+    <div class="row">
+      <label>VR Ruling Custom (USD/W) ★</label>
+      <input class="hi" type="number" inputmode="decimal" id="vrCustom" value="0.118" step="0.001">
+    </div>
+    <div class="row">
+      <label>Watt per Panel (Wp)</label>
+      <input type="number" inputmode="numeric" id="watt" value="645" step="5">
+    </div>
+    <div class="row">
+      <label>No. of Panels (PCS)</label>
+      <input type="number" inputmode="numeric" id="pcs" value="720" step="1">
+    </div>
+  </div>
+</div>
+
+<!-- SHIPMENT COSTS -->
+<div class="section">
+  <div class="section-head">Shipment Costs</div>
+  <div class="section-body">
+    <div class="row">
+      <label>Freight (USD)</label>
+      <input type="number" inputmode="numeric" id="freight" value="1500" step="100">
+    </div>
+    <div class="row">
+      <label>Port Charges (PKR) ★</label>
+      <input class="hi" type="number" inputmode="numeric" id="port" value="250000" step="1000">
+    </div>
+    <div class="row">
+      <label>Transport (PKR)</label>
+      <input type="number" inputmode="numeric" id="transport" value="0" step="1000">
+    </div>
+  </div>
+</div>
+
+<!-- COST BREAKDOWN -->
+<div class="section" style="margin-top:12px;">
+  <div class="section-head">Cost Breakdown</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ITEM</th>
+          <th>PKR TOTAL</th>
+          <th>PKR / W</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="3">Panel Cost</td></tr>
+        <tr>
+          <td>Panel Cost</td>
+          <td id="r_panel_pkr">—</td>
+          <td id="r_panel_pw">—</td>
+        </tr>
+
+        <tr class="cat-row"><td colspan="3">Duties on Assessable Value</td></tr>
+        <tr>
+          <td>2% Income Tax</td>
+          <td id="r_it_pkr">—</td>
+          <td id="r_it_pw">—</td>
+        </tr>
+        <tr>
+          <td>10% Sales Tax</td>
+          <td id="r_st_pkr">—</td>
+          <td id="r_st_pw">—</td>
+        </tr>
+        <tr>
+          <td>3% Addl. Sales Tax</td>
+          <td id="r_ast_pkr">—</td>
+          <td id="r_ast_pw">—</td>
+        </tr>
+        <tr>
+          <td>0.80% CESS</td>
+          <td id="r_cess_pkr">—</td>
+          <td id="r_cess_pw">—</td>
+        </tr>
+
+        <tr class="cat-row"><td colspan="3">Shipment</td></tr>
+        <tr>
+          <td>Freight</td>
+          <td id="r_freight_pkr">—</td>
+          <td id="r_freight_pw">—</td>
+        </tr>
+        <tr>
+          <td>Port Charges</td>
+          <td id="r_port_pkr">—</td>
+          <td id="r_port_pw">—</td>
+        </tr>
+        <tr>
+          <td>Transport</td>
+          <td id="r_transport_pkr">—</td>
+          <td id="r_transport_pw">—</td>
+        </tr>
+
+        <tr class="total-row">
+          <td>TOTAL LANDED</td>
+          <td></td>
+          <td id="r_total_pkr">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="lbl">PKR / Watt</div>
+      <div class="val" id="m_pw">—</div>
+      <div class="sub">per Wp</div>
+    </div>
+    <div class="metric">
+      <div class="lbl">Per Panel</div>
+      <div class="val" id="m_panel">—</div>
+      <div class="sub">PKR</div>
+    </div>
+    <div class="metric">
+      <div class="lbl">Container</div>
+      <div class="val" id="m_cont">—</div>
+      <div class="sub">PKR total</div>
+    </div>
+  </div>
+  <p class="note">★ Update these fields every shipment</p>
+  <div style="height:14px;"></div>
+</div>
+
+<script>
+  var ids = ["dollar","rmb","perWatt","vrCustom","watt","pcs","freight","port","transport"];
+  for (var i = 0; i < ids.length; i++) {
+    document.getElementById(ids[i]).addEventListener("input", calc);
+  }
+
+  function commas(n) {
+    var s = Math.abs(n).toString().split(".");
+    s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return s.join(".");
+  }
+  function fmt(n)   { return commas(parseFloat(Math.abs(n).toFixed(2))); }
+  function fmtW(n)  { return parseFloat(Math.abs(n).toFixed(2)).toFixed(2); }
+  function whole(n) { return commas(Math.round(Math.abs(n))); }
+  function v(id)    { return parseFloat(document.getElementById(id).value) || 0; }
+
+  function set(id, pkr, tw) {
+    document.getElementById(id + "_pkr").textContent = fmt(pkr);
+    document.getElementById(id + "_pw" ).textContent = fmtW(pkr / tw);
+  }
+
+  function calc() {
+    var dollar     = v("dollar");
+    var perWatt    = v("perWatt");
+    var vrCustom   = v("vrCustom");
+    var watt       = v("watt");
+    var pcs        = v("pcs");
+    var freightUSD = v("freight");
+    var portPKR    = v("port");
+    var transPKR   = v("transport");
+
+    var tw = watt * pcs;
+    if (tw === 0) return;
+
+    var assessable = vrCustom * dollar * tw * 1.01;
+    var panelPKR   = perWatt  * dollar * tw;
+    var itPKR      = assessable * 0.02;
+    var stPKR      = assessable * 0.10;
+    var astPKR     = assessable * 0.03;
+    var cessPKR    = assessable * 0.008;
+    var freightPKR = freightUSD * dollar;
+    var total      = panelPKR + itPKR + stPKR + astPKR + cessPKR
+                   + freightPKR + portPKR + transPKR;
+
+    set("r_panel",     panelPKR,   tw);
+    set("r_it",        itPKR,      tw);
+    set("r_st",        stPKR,      tw);
+    set("r_ast",       astPKR,     tw);
+    set("r_cess",      cessPKR,    tw);
+    set("r_freight",   freightPKR, tw);
+    set("r_port",      portPKR,    tw);
+    set("r_transport", transPKR,   tw);
+
+    document.getElementById("r_total_pkr").textContent = whole(total) + " PKR";
+    document.getElementById("m_pw"       ).textContent = fmtW(total / tw);
+    document.getElementById("m_panel"    ).textContent = whole(total / pcs);
+    document.getElementById("m_cont"     ).textContent = whole(total);
+  }
+
+  calc();
+</script>
+</body>
+</html>
