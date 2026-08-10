@@ -1,0 +1,16 @@
+{
+  "name": "ZEM CO Fast Landed Cost",
+  "short_name": "Landed Cost",
+  "description": "Offline landed-cost calculator for solar panel imports from China to Pakistan.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F4F5F4",
+  "theme_color": "#0B0F0B",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
