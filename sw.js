@@ -55,9 +55,15 @@ self.addEventListener("fetch", event => {
         return response;
       })
       .catch(() =>
-        caches.match(request, { ignoreSearch: true })
-          .then(hit => hit || caches.match("./index.html"))
-          .then(hit => hit || Response.error())
+        caches.match(request, { ignoreSearch: true }).then(hit => {
+          if (hit) return hit;
+          /* Fall back to the page ONLY for a navigation. Doing it for every
+             failed request hands back an HTML document in place of a missing
+             image or script — the request looks like it succeeded when it did
+             not, which is exactly the class of lie this tool must not tell. */
+          if (request.mode === "navigate") return caches.match("./index.html");
+          return Response.error();
+        }).then(hit => hit || Response.error())
       )
   );
 });
