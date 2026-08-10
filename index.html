@@ -12,7 +12,6 @@
   <meta name="format-detection" content="telephone=no">
   <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMTSURBVFhH7ZZfSFpRAMZPdK3MzJIoGYn9GaOe9hL15GsP0WsPaQ8RRKxRNArcXmI+FQQJjR4q9hRIBMEia9ieSnCVGESm1kxza1YObTCoYOQ37t2u897jX4i2hz74IRzOPb8PPedcCf5xiHjgvvNQ4P8tEI1G0dTUBELInbOwsBD3pCwwODhIPZgNBQUF1FgiJpNJ4ElaIHoZhf2jHSuWFVhWLWlh56y9X8POzg5cLhfa2tooKc/o6KhYRRdYereEKk0VVBoVNE80Gal+XI2Gpw3cs3Nzc8jPz6fELAMDA2IVF0GBDdsGpOVSMHIGTEmWyBksW5ZhNpspKU9XV1eiRpB4AeeuE2Wqspzl8+Z5bG5uUlKe9vZ2xGIxoTUh8QLN2uac5JJSCUxvTNjb24NEIqHELFqtFjc3N0KjKPEC/hM/PF5PStxeD44DfgSCJxzBL59ht9uRl5dHiVlaWlpwfX0ttCUJtQnT5uoKiETYSwIIhzExMoIXOh0M3d0CXvX0ILi9zc3B7a14FUGyLvB9dRXHSiUOCguxX1TEEaysxLlaTXGmViMgl2NfJsPPUEi8lCBZFfhht+OTVAofIXARgoMMeAnBV0LwbWoKSLMB2WQscOV04rCkBME/i7sz4CEEp4Tg3GgUL5U0GQv4W1sRlMkQqqvDeX09Rai2Fu7ycrgUCo6AQoHTFJdOsmQsELu8RCwSweuhIfTrdHiu18d51tmJ3o4OhI+OAHbHs5uUJYdkLMCGvUbFx4xncnISobMz+PzH3DFl8Rx6qWMcP84eN/fJJ2MBg8FASXmmp6fh2HX8vkGTXFapkMgl8fXTFhgfH6ekPEajET6/D6WVpZQgLXIGs29n446UBWZmZigpT19fHwLBACqqK3K6vtm5YxNjAk/SAouLi5SUR6/Xc3N6+3uhqs3ula1+rIbykRLDL4fFKrqA1WpN+U6vqamBzWaDw+HA+od17s9INljXrbgIX4hVXAQFtra2UFxcTIl5GIahxrKhsbExUSPI37eh3089eBfIZDLuG0sV6ie47zwUeCjwC+FUEIyLGvpVAAAAAElFTkSuQmCC">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-  <link rel="manifest" href="manifest.webmanifest">
   <title>ZEM CO | Fast Landed Cost</title>
   <style>
     /* Official Archivo and Inter Latin WOFF2 assets, embedded for offline use. */
@@ -2472,6 +2471,13 @@
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("sw.js").catch(() => {});
       });
+      /* The manifest lives beside the hosted copy only. Declaring it
+         statically makes a file:// copy try to fetch a sibling that is not
+         there, which Safari reports as a console error. */
+      const manifest = document.createElement("link");
+      manifest.rel = "manifest";
+      manifest.href = "manifest.webmanifest";
+      document.head.appendChild(manifest);
     }
   </script>
 </body>
